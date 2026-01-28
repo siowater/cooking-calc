@@ -13,44 +13,67 @@
 ## 3. 機能要件
 
 ### 3.1 OCR・スキャン機能
-- **リアルタイム抽出**: カメラ越しに「材料名」「数値」「単位」を自動認識。
+
+#### Phase 1（現在実装済み - Expo Go対応）
+- **静止画OCR**: カメラまたはフォトライブラリから画像を選択し、Google Cloud Vision APIで「材料名」「数値」「単位」を認識。
 - **行の紐付け（名寄せ）**: Y座標（高さ）の近似値に基づき、離れた場所にある材料名と数値をペアリング。
-- **時間認識**: 「発酵 60分」などの工程時間も抽出。
+- **高精度パーサー**: 200+の材料キーワード、60+の除外パターン、信頼度スコアリングによる材料抽出。
+- **複雑な分量認識**: 「大さじ1と1/2」「カップ1/2」などの複合表現に対応。
 - **マニュアル修正**: OCRの誤認識をキーボードで直接修正可能。
 
-### 3.2 動的スケーリング（計算）
+#### Phase 2（将来実装予定 - Development Build必要）
+- **リアルタイムOCR**: React Native Vision Camera v4 + ML Kit OCRによるカメラ越しのリアルタイム認識。
+- **時間認識**: 「発酵 60分」などの工程時間も抽出。
+
+### 3.2 動的スケーリング（計算）【実装済み】
 - **基準材料選択**: 読み取ったリストから任意の1つを基準として選択。
-- **連動スライダー**: スライダー操作で基準値を変更すると、全材料をリアルタイムに倍率計算（$Target = Original \times Ratio$）。
+- **+/-ボタン操作**: ボタン操作で基準値を変更すると、全材料をリアルタイムに倍率計算（$Target = Original \times Ratio$）。
 - **分量ロック**: 卵（1個50g）など、特定の材料を固定して他の材料を逆算。
 - **丸め処理**: 整数表示、または小数点第1位表示をユーザー設定で切替。
 
 ### 3.3 調理・計量支援
-- **ARオーバーレイ**: カメラ映像上のテキスト位置に、計算後の数値をSkiaで直接描画。
+
+#### Phase 1（現在実装済み）
 - **計量済みチェック**: 済んだ材料をタップしてグレーアウト（消し込み）。
+
+#### Phase 2（将来実装予定 - Development Build必要）
+- **ARオーバーレイ**: カメラ映像上のテキスト位置に、計算後の数値をSkiaで直接描画。
 - **残量リミッター**: 粉などの在庫上限を設定し、超過時に警告（赤字）表示。
 - **ワンタップタイマー**: 抽出した時間をタップするだけでアプリ内タイマーを起動。
 - **微量材料アラート**: 塩・イーストなどの微量（かつ重要な）材料を強調表示。
 
-### 3.4 パン作り特化ロジック
+### 3.4 パン作り特化ロジック【実装済み】
 - **ベーカーズパーセント**: 粉の総量を100%とした比率を自動算出・表示。
-- **代替材料サジェスト**: 牛乳→豆乳などの代替案と換算比率の提示。
+- **代替材料サジェスト**: 牛乳→豆乳などの代替案と換算比率の提示（将来実装予定）。
 
 ## 4. 技術スタック・制約
-- **Frontend**: Expo (SDK 50+, Managed Workflow)
-- **OCR/Camera**: React Native Vision Camera v4 + ML Kit OCR
-- **Graphics**: React Native Skia (AR Overlay)
+
+### 現在の構成（Phase 1）
+- **Frontend**: Expo SDK 54 (Managed Workflow)
+- **OCR**: Google Cloud Vision API（静止画OCR）
+- **画像選択**: expo-image-picker
 - **Backend**: Supabase (Auth, DB, Storage)
 - **State**: Zustand
-- **Environment**: Windows OS開発 / EAS BuildによるiOS・Android実機検証
-- **DB構成**:
-    - `ingredients_master`: 材料属性（カテゴリー、比重、ベーカーズベース判定）
-    - `recipes`: 調整済みレシピの保存、OCR元の画像保存
+- **Navigation**: React Navigation (Bottom Tabs + Native Stack)
+- **Environment**: Windows OS開発 / Expo Go（iOS/Android）でのテスト
+
+### 将来の構成（Phase 2 - Development Build）
+- **OCR/Camera**: React Native Vision Camera v4 + ML Kit OCR
+- **Graphics**: React Native Skia (AR Overlay)
+- **Build**: EAS BuildによるiOS・Android実機検証
+
+### DB構成
+- `ingredients_master`: 材料属性（カテゴリー、比重、ベーカーズベース判定）
+- `recipes`: 調整済みレシピの保存、OCR元の画像保存
 
 ## 5. 非機能要件
-- **オフライン動作**: ネットが不安定なキッチンでもOCRと計算が可能であること。
+- **オンライン動作（Phase 1）**: Cloud Vision APIを使用するためネットワーク接続が必要。
+- **オフライン動作（Phase 2）**: ML Kit OCRによるデバイス上での処理でオフライン対応。
 - **低遅延描画**: スライダー操作に対し、数値描画が60FPSで追従すること。
 - **ノーログイン利用**: ログインしなくても基本機能が使えること。
 
 ## 6. 将来的な拡張項目 (Backlog)
 - 生地総重量（仕上がり重量）からの全材料逆算。
 - 複数レシピのマージ機能。
+- Vision Camera + ML Kitによるリアルタイム OCR。
+- React Native SkiaによるARオーバーレイ。
