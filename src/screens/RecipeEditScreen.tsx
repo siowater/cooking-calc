@@ -40,31 +40,8 @@ export default function RecipeEditScreen({ navigation }: any) {
       setTitle(currentRecipe.title)
     } else {
       setTitle('')
-      // サンプルデータを設定（テスト用）
-      const sampleIngredients: Ingredient[] = [
-        {
-          id: '1',
-          name: '強力粉',
-          amount: 250,
-          unit: 'g',
-          is_base: true,
-        },
-        {
-          id: '2',
-          name: '水',
-          amount: 150,
-          unit: 'ml',
-        },
-        {
-          id: '3',
-          name: '塩',
-          amount: 5,
-          unit: 'g',
-        },
-      ]
-      setIngredients(sampleIngredients)
     }
-  }, [currentRecipe, setIngredients])
+  }, [currentRecipe])
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -188,61 +165,73 @@ export default function RecipeEditScreen({ navigation }: any) {
 
       <View style={styles.section}>
         <Text style={styles.label}>材料リスト</Text>
-        {ingredients.map((ingredient) => {
-          const calculatedAmount =
-            calculatedAmounts[ingredient.id] || ingredient.amount
-          const percentage = bakingPercentages[ingredient.id]
+        {ingredients.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateIcon}>📷</Text>
+            <Text style={styles.emptyStateText}>
+              材料がありません
+            </Text>
+            <Text style={styles.emptyStateSubtext}>
+              「スキャン」タブでレシピを撮影してください
+            </Text>
+          </View>
+        ) : (
+          ingredients.map((ingredient) => {
+            const calculatedAmount =
+              calculatedAmounts[ingredient.id] || ingredient.amount
+            const percentage = bakingPercentages[ingredient.id]
 
-          return (
-            <View key={ingredient.id} style={styles.ingredientItem}>
-              <View style={styles.ingredientHeader}>
-                <TouchableOpacity
-                  onPress={() => toggleIngredientCheck(ingredient.id)}
-                  style={styles.checkbox}
-                >
-                  <Text style={styles.checkboxText}>
-                    {ingredient.is_checked ? '☑' : '☐'}
+            return (
+              <View key={ingredient.id} style={styles.ingredientItem}>
+                <View style={styles.ingredientHeader}>
+                  <TouchableOpacity
+                    onPress={() => toggleIngredientCheck(ingredient.id)}
+                    style={styles.checkbox}
+                  >
+                    <Text style={styles.checkboxText}>
+                      {ingredient.is_checked ? '☑' : '☐'}
+                    </Text>
+                  </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.ingredientName,
+                      ingredient.is_checked && styles.checkedText,
+                    ]}
+                  >
+                    {ingredient.name}
                   </Text>
-                </TouchableOpacity>
-                <Text
-                  style={[
-                    styles.ingredientName,
-                    ingredient.is_checked && styles.checkedText,
-                  ]}
-                >
-                  {ingredient.name}
-                </Text>
-                <TouchableOpacity
-                  onPress={() => toggleIngredientLock(ingredient.id)}
-                  style={styles.lockButton}
-                >
-                  <Text style={styles.lockButtonText}>
-                    {scalingState.lockedIngredients.includes(ingredient.id)
-                      ? '🔒'
-                      : '🔓'}
+                  <TouchableOpacity
+                    onPress={() => toggleIngredientLock(ingredient.id)}
+                    style={styles.lockButton}
+                  >
+                    <Text style={styles.lockButtonText}>
+                      {scalingState.lockedIngredients.includes(ingredient.id)
+                        ? '🔒'
+                        : '🔓'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.ingredientAmounts}>
+                  <Text
+                    style={[
+                      styles.amountText,
+                      ingredient.is_checked && styles.checkedText,
+                    ]}
+                  >
+                    {ingredient.amount}
+                    {ingredient.unit} → {calculatedAmount}
+                    {ingredient.unit}
                   </Text>
-                </TouchableOpacity>
+                  {percentage !== undefined && (
+                    <Text style={styles.percentageText}>
+                      ({percentage.toFixed(1)}%)
+                    </Text>
+                  )}
+                </View>
               </View>
-              <View style={styles.ingredientAmounts}>
-                <Text
-                  style={[
-                    styles.amountText,
-                    ingredient.is_checked && styles.checkedText,
-                  ]}
-                >
-                  {ingredient.amount}
-                  {ingredient.unit} → {calculatedAmount}
-                  {ingredient.unit}
-                </Text>
-                {percentage !== undefined && (
-                  <Text style={styles.percentageText}>
-                    ({percentage.toFixed(1)}%)
-                  </Text>
-                )}
-              </View>
-            </View>
-          )
-        })}
+            )
+          })
+        )}
       </View>
 
       <View style={styles.buttonContainer}>
@@ -407,5 +396,24 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyStateIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  emptyStateText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
   },
 })

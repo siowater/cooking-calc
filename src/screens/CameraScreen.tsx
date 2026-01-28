@@ -108,26 +108,6 @@ export default function CameraScreen({ navigation }: any) {
   }
 
   /**
-   * モックOCR処理を実行（テスト用）
-   */
-  const handleMockOCR = useCallback(async () => {
-    try {
-      setProcessing(true)
-      const result = await ocrService.processImageMock()
-      setOcrResult(result.ingredients)
-      Alert.alert(
-        'モック認識完了',
-        `${result.ingredients.length}種類の材料を認識しました。（テストデータ）`
-      )
-    } catch (error) {
-      console.error('モックOCRエラー:', error)
-      Alert.alert('エラー', 'モックOCR処理中にエラーが発生しました')
-    } finally {
-      setProcessing(false)
-    }
-  }, [])
-
-  /**
    * OCR結果を使用してレシピ編集画面に遷移
    */
   const handleUseOCRResult = useCallback(() => {
@@ -172,11 +152,6 @@ export default function CameraScreen({ navigation }: any) {
         <Text style={styles.subtitle}>
           レシピの写真を撮影または選択して材料を認識します
         </Text>
-        {!ocrService.isCloudVisionConfigured() && (
-          <Text style={styles.warningText}>
-            Cloud Vision APIキーが未設定のためテストモードで動作します
-          </Text>
-        )}
       </View>
 
       {/* 画像プレビュー */}
@@ -218,17 +193,6 @@ export default function CameraScreen({ navigation }: any) {
             style={styles.halfButton}
           />
         </View>
-
-        {/* テスト用モックボタン */}
-        <Button
-          title={processing ? '処理中...' : 'テストデータで試す'}
-          onPress={handleMockOCR}
-          disabled={processing}
-          loading={processing}
-          variant="outline"
-          size="medium"
-          style={styles.button}
-        />
 
         {/* OCR結果表示 */}
         {ocrResult.length > 0 && (
