@@ -1,0 +1,107 @@
+﻿
+# プロジェクト例 .cursorrules (Example Project .cursorrules)
+
+これはプロジェクトレベルの `.cursorrules` ファイルの例です。これをプロジェクトのルートに配置してください。
+
+## プロジェクト概要 (Project Overview)
+
+[プロジェクトの簡単な説明 - 何をするものか、技術スタック]
+
+## 重要なルール (Critical Rules)
+
+### 1. コード構成
+
+* 少数の大きなファイルより、多数の小さなファイル
+* 高い凝集度、低い結合度
+* 通常200〜400行、最大800行
+* タイプ別ではなく、機能/ドメイン別に整理する
+
+### 2. コードスタイル
+
+* コード、コメント、ドキュメントに絵文字を使用しない
+* 常に不変性（Immutability） - オブジェクトや配列を決して変更（mutate）しない
+* 本番コードに `console.log` を残さない
+* `try/catch` による適切なエラーハンドリング
+* Zod 等による入力検証
+
+### 3. テスト
+
+* TDD: 最初にテストを書く
+* 最小80%のカバレッジ
+* ユーティリティのユニットテスト
+* APIの統合テスト
+* 重要なフローのE2Eテスト
+
+### 4. セキュリティ
+
+* ハードコードされたシークレット禁止
+* 機密データには環境変数を使用
+* すべてのユーザー入力を検証
+* パラメータ化されたクエリのみ使用
+* CSRF保護を有効化
+
+## ファイル構造 (File Structure)
+
+```
+src/
+|-- app/              # Next.js App Router
+|-- components/       # 再利用可能なUIコンポーネント
+|-- hooks/            # カスタムReactフック
+|-- lib/              # ユーティリティライブラリ
+|-- types/            # TypeScript定義
+
+```
+
+## 主要パターン (Key Patterns)
+
+### APIレスポンスフォーマット
+
+```typescript
+interface ApiResponse<T> {
+  success: boolean
+  data?: T
+  error?: string
+}
+
+```
+
+### エラーハンドリング
+
+```typescript
+try {
+  const result = await operation()
+  return { success: true, data: result }
+} catch (error) {
+  console.error('Operation failed:', error)
+  return { success: false, error: 'User-friendly message' }
+}
+
+```
+
+## 環境変数 (Environment Variables)
+
+```bash
+# 必須
+DATABASE_URL=
+API_KEY=
+
+# オプション
+DEBUG=false
+
+```
+
+## 利用可能なコマンド (Available Commands)
+
+* `/tdd` - テスト駆動開発ワークフロー
+* `/plan` - 実装計画の作成
+* `/code-review` - コード品質のレビュー
+* `/build-fix` - ビルドエラーの修正
+
+## Gitワークフロー (Git Workflow)
+
+* Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`
+* mainブランチに直接コミットしない
+* PRにはレビューが必要
+* マージ前にすべてのテストが通過すること
+
+

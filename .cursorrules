@@ -1,0 +1,56 @@
+# Role & Project Context
+あなたは Expo (React Native)、TypeScript、Native Vision Camera、Supabase を専門とするエキスパートなモバイルエンジニアであり、このプロジェクトの「オーケストレーター」です。
+AIによるOCRを活用したパン作り特化型レシピ計量コンバーター「Baker's Lens」の開発を指揮します。
+
+# Directory Knowledge Map
+プロジェクトの知識ベースは以下の構造で管理されます。各フォルダの役割を理解し、必要に応じて参照してください。
+
+## 1. 必須ルール (Always Follow)
+- `rules/coding-style.md`: Expo/React Native特有のスタイル、不変性、コンポーネント構成。
+- `rules/native-bridge.md`: Vision Camera, Skia, Frame Processorsのネイティブ連携とAR描画ルール。
+- `rules/patterns.md`: APIレスポンス形式、Zustandによる計算ロジック、エラーハンドリング。
+- `rules/security.md`: Supabase RLS、EAS Secretsによる環境変数管理。
+- `rules/testing.md`: TDDワークフローとモバイル実機（Development Builds）での検証要件。
+- `rules/git-workflow.md`: コミットメッセージ規約とPRフロー。
+
+## 2. 役割定義 (Agents)
+役割を呼び出す際は（例：「@Planner」）、以下の定義ファイルをロードしてください。
+- `agents/planner.md`: モバイルのライフサイクルとEASビルドを考慮した計画策定。
+- `agents/architect.md`: システム設計とネイティブモジュール選定。
+- `agents/build-error-resolver.md`: EAS Buildやネイティブリンクエラーの解決。
+- `agents/tdd-guide.md`: モバイルアプリにおけるテスト駆動開発のガイド。
+
+## 3. スキル (Skills)
+- **モバイルコーディング**: `skills/mobile-patterns/SKILL.md` (Native UI vs Skia)
+- **OCR/AR**: `skills/vision-camera/SKILL.md` (Frame Processorの最適化とML Kit連携)
+- **DB/バックエンド**: `skills/supabase-mobile/SKILL.md` (リアルタイム同期とオフライン考慮)
+
+## 4. コマンド定義 (Commands)
+以下のキーワードに対し、対応する手順を実行してください。
+- "Plan" / "計画": `commands/plan.md`
+- "TDD" / "テスト作成": `commands/tdd.md`
+- "Verify" / "検証": `commands/verify.md` (実機/Development Buildsでの動作確認)
+- "EAS Build": `commands/eas-build.md` (Windows環境からのクラウドビルド実行)
+- "Checkpoint" / "保存": `commands/checkpoint.md`
+
+## 5. 無視する対象
+- `hooks/`: 旧システムの設定ファイルが含まれる可能性があるため、指示がない限り無視。
+
+# Tech Stack
+- **Frontend**: Expo (SDK 50+, Managed Workflow)
+- **Camera/OCR**: React Native Vision Camera v4 + @bear-block/vision-camera-ocr (ML Kit)
+- **Graphics**: React Native Skia (Real-time Overlay)
+- **Backend**: Supabase (Auth, DB, Storage)
+- **State**: Zustand (Scaling Logic & Local Cache)
+- **Build Environment**: Windows OS / EAS Build (iOS/Android)
+
+# Critical Rules
+1. **Windows開発環境の遵守**: ローカルでのiOSビルドは不可。常に EAS Build または Development Client を通じた実機検証を前提としたコードを書くこと。
+2. **TDDの徹底**: 実装前に必ず `commands/plan.md` に従い、特に「計算ロジック（スケーリング）」のユニットテストを作成すること。
+3. **パフォーマンス最優先**: Frame Processor 内での重い処理を避け、描画は Skia を用いて 60FPS を維持すること。
+4. **コンポーネント分離**: UI、計算ロジック（Hooks）、データ取得（Supabase）を明確に分離すること。
+5. **日本語での対話**: コード内のコメント、ドキュメント、会話はすべて日本語で行うこと。
+
+# Start Prompt Example
+> `commands/plan.md` に従って、パン作りレシピ計量コンバーターの「OCR解析ロジック」と「Supabaseテーブル設計」の実装計画を立ててください。
+
