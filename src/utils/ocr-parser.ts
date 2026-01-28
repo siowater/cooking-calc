@@ -598,11 +598,12 @@ export function parseOCRResult(textBlocks: OCRTextBlock[]): {
       const ingredient = parseIngredientLine(lineText, yPosition)
       if (ingredient) {
         // 材料セクション内ならボーナス
-        if (inIngredientSection) {
+        if (inIngredientSection && ingredient.confidence !== undefined) {
           ingredient.confidence = Math.min(1, ingredient.confidence + 0.1)
         }
         ingredients.push(ingredient)
-        console.log(`✅ 材料認識: ${ingredient.name} ${ingredient.amount}${ingredient.unit} [信頼度: ${(ingredient.confidence * 100).toFixed(0)}%]`)
+        const confidencePercent = ingredient.confidence !== undefined ? (ingredient.confidence * 100).toFixed(0) : '?'
+        console.log(`✅ 材料認識: ${ingredient.name} ${ingredient.amount}${ingredient.unit} [信頼度: ${confidencePercent}%]`)
       }
     }
 
